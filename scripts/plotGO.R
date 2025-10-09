@@ -10,6 +10,7 @@ library(cowplot)
 
 dmel_dsim <- read.csv("dvir_up_genes_not_dmel_up_pr_0812.txt", header = FALSE)
 dmel_no_dsim <- read.csv("dmel_up_genes_not_dsim_up_pr_0812.txt", header = FALSE)
+
 ## GO enrichment analysis
 library(clusterProfiler)
 gene = as.list(dmel_dsim[, 1]) 
@@ -37,9 +38,6 @@ ego_pr <- enrichGO(gene       = gene_pr,
                 pvalueCutoff  = 0.01,
                 qvalueCutoff  = 0.05,
                 readable      = TRUE)
-
-# Visualize enriched GO terms as a directed acyclic graph
-goplot(ego)
 
 # Bar plot
 library(enrichplot)

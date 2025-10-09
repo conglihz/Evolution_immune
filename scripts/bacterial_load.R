@@ -39,20 +39,20 @@ data_summary <- data %>%
   )
 
 
-# Find default log10 breaks in your current data
+# find default log10 breaks
 default_breaks <- scales::log_breaks()(range(data$Load, na.rm = TRUE))
 
-# Add the extra tick at 0.0001
+# add extra tick at 0.0001
 custom_breaks <- sort(unique(c(0.01, default_breaks)))
 
 p <- ggplot(data, aes(x = Species, y = Load, color = Species)) +
-      # Plot individual points (jittered)
+      # plot individual points (jittered)
       geom_point(
         size = 0.3,
-        alpha = 1,  # Lower alpha for individual points
-        position = position_jitter(width = 0.2)  # Add jitter to avoid overlap
+        alpha = 1,  # lower alpha for individual points
+        position = position_jitter(width = 0.2)  # add jitter to avoid overlap
       ) +
-      # Vertical CI bars
+      # vertical CI bars
       geom_errorbar(
         data = data_summary,
         aes(x = Species, ymin = ci_lower, ymax = ci_upper),
@@ -62,7 +62,7 @@ p <- ggplot(data, aes(x = Species, y = Load, color = Species)) +
         inherit.aes = FALSE
       ) +
       
-      # Horizontal line at median
+      # horizontal line at median
       geom_errorbar(
         data = data_summary,
         aes(x = Species, ymin = median_load, ymax = median_load),
@@ -77,7 +77,6 @@ p <- ggplot(data, aes(x = Species, y = Load, color = Species)) +
         y = "CFU/ml",
         color = "Species"
       ) +
-      #scale_y_continuous(trans = 'log10') +  # Apply log10 transformation directly on the y-axis
       scale_y_continuous(
         trans = "log10",
         breaks = custom_breaks,
@@ -87,7 +86,7 @@ p <- ggplot(data, aes(x = Species, y = Load, color = Species)) +
           x_lab
         }
       ) +
-      scale_color_npg() +  # Apply NPG color palette
+      scale_color_npg() +  # apply NPG color palette
       theme(
         plot.title = element_text(hjust = 0.5, size = 8),
         axis.title = element_text(size = 8),
@@ -95,7 +94,6 @@ p <- ggplot(data, aes(x = Species, y = Load, color = Species)) +
         legend.position = "none",
         axis.line = element_line(color = "black", size = 0.4),
         panel.background = element_rect(fill = "white"),
-        #panel.grid.major = element_line(color = "gray90", linewidth = 1),
         panel.grid.major = element_blank()
       )
 print(p)

@@ -2,18 +2,18 @@ setwd("~/Documents/Zhao_Lab/manuscript/figures/RNAseq_updated/5species/pagels_la
 library(ape)
 library(phytools)
 
-# Load data
-df <- read.csv("pivot_df_pr0708.csv")  # replace with your actual file
+# load data
+df <- read.csv("pivot_df_pr0708.csv")
 
-# Load and prepare the tree
+# load and prepare the tree
 tree <- read.tree("tree.nwk")
 species_cols <- c("dmel", "dsim", "dana", "dvir", "sleb")
 
-# Ensure tree tips match species columns
+# ensure tree tips match species columns
 common_species <- intersect(tree$tip.label, species_cols)
 tree <- drop.tip(tree, setdiff(tree$tip.label, common_species))
 
-# Initialize results list
+# initialize results list
 lambda_results <- data.frame(
   gene = df$gene,
   lambda = NA,
@@ -21,18 +21,18 @@ lambda_results <- data.frame(
   p_value = NA
 )
 
-# Loop over genes
+# loop over genes
 for (i in 1:nrow(df)) {
   gene_id <- df$gene[i]
   trait_vector <- as.numeric(df[i, common_species])
   names(trait_vector) <- common_species
   
-  # Skip if all NA or no variation
+  # skip if all NA or no variation
   if (all(is.na(trait_vector)) || var(trait_vector, na.rm = TRUE) == 0) {
     next
   }
   
-  # Try-catch to handle potential fitting errors
+  # try-catch to handle potential fitting errors
   try({
     result <- phylosig(tree, trait_vector, method = "lambda", test = TRUE)
     lambda_results$lambda[i] <- result$lambda
@@ -41,5 +41,5 @@ for (i in 1:nrow(df)) {
   }, silent = TRUE)
 }
 
-# Save results
+# save results
 write.csv(lambda_results, "pagel_lambda_by_gene_pr.csv", row.names = FALSE)

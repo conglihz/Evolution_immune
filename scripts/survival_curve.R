@@ -1,5 +1,4 @@
 setwd("~/Documents/Zhao_Lab/infection/survival")
-# Load required packages
 library(survival)
 library(survminer)
 library(dplyr)
@@ -9,11 +8,9 @@ library(ggplot2)
 library(ggrepel)
 
 # Pr
-# Import the dataset and have a look at it
 data = read.csv('pr_data.csv')
 glimpse(data)
 
-# histogram of dead_day distribution
 sps=c('dmel','dsim','dana','dvir','sleb')
 for (s in sps)
 {
@@ -22,28 +19,22 @@ for (s in sps)
   hist(data2$dead_day, main = t, xlim= c(0,30), ylim = c(0,50), breaks = 30)
 }
 
-
-
 #transform grouping variable(sp in this case) to factor class so I can define levels
 data1 <- data %>% mutate(sp= factor(sp, levels = c('dmel','dsim','dana','dvir','sleb')))
-#data1 <- data1[data1$sp == 'dana' & data1$batch == '32823',]
-#data1 <- data1 %>% mutate(batch= factor(batch, levels = c('50623','50923','51323','52423','52723')))
-data1
 
-# Fit survival data using the Kaplan-Meier method
+# fit survival data using the Kaplan-Meier method
 surv_object <- Surv(time = data1$dead_day, event = data1$eventtype)
 surv_object 
 
 fit1 <- survfit(surv_object ~ sp, data = data1)
 summary(fit1)
 
-
 # get median survival
 get_median_survival <- function(fit) {
   surv_summ <- summary(fit)
   result <- list()
   
-  # Get strata info
+  # get strata info
   strata_names <- names(fit$strata)
   strata_lengths <- fit$strata
   
@@ -53,7 +44,7 @@ get_median_survival <- function(fit) {
     group_surv <- surv_summ$surv[start:end]
     group_time <- surv_summ$time[start:end]
     
-    # Remove NA values (robustness fix)
+    #remove NA values
     valid_idx <- which(!is.na(group_surv) & !is.na(group_time))
     
     if (length(valid_idx) == 0) {
@@ -62,7 +53,7 @@ get_median_survival <- function(fit) {
       group_surv <- group_surv[valid_idx]
       group_time <- group_time[valid_idx]
       
-      # Find first time survival drops to or below 0.5
+      # find first time survival drops to or below 0.5
       if (any(group_surv <= 0.5)) {
         median_time <- group_time[min(which(group_surv <= 0.5))]
       } else {
@@ -79,12 +70,10 @@ get_median_survival <- function(fit) {
 
 get_median_survival(fit1)
 
-
-
-# Extract summary at day 3
+# extract summary at day 3
 summary_fit_day3 <- summary(fit1, times = 3)
 
-# Create data frame
+# create data frame
 survival_day3_df <- data.frame(
   species = gsub("sp=", "", summary_fit_day3$strata),
   time = summary_fit_day3$time,

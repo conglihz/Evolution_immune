@@ -9,7 +9,7 @@ library(DEGreport)
 library(cowplot)
 
 
-## Volcano plot
+## volcano plot
 plot_pr <- ggplot(res_table_pr_tb) +
   geom_point(aes(x = log2FoldChange, y = -log10(padj), color = gene_category), size = 0.3) +
   ggtitle(expression(italic("Providencia rettgeri"))) +
@@ -20,7 +20,6 @@ plot_pr <- ggplot(res_table_pr_tb) +
   scale_x_continuous(limits = c(-5,12)) +
   scale_y_continuous(limits = c(0,50)) +
   scale_color_manual(values = c("Upregulated" = "#F8766D", "Downregulated" = "#00BA38", "Non-significant" = "grey")) +
-  #theme_minimal() +
   theme(legend.position = "none",
         plot.title = element_text(size = 8, hjust = 0.5),
         axis.title = element_text(size = 8),
